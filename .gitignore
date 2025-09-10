@@ -1,0 +1,18 @@
+data/
+test.py
+Steam.lnk
+housing_clustering.png
+main.py
+/reports
+models/
+_pycache_/
+backend/_pycache_/
+backend/.venv/
+backend/#
+backend/data/
+backend/models/
+backend/Windows/
+viewer.html
+app copy.py
+.env
+coordinates_visualize.py

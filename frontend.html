@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <title>極簡預算估算器</title>
+  <style>
+    body {
+  font-family: "Roboto", sans-serif;
+  background: #1f2937;
+  color: #f9fafb;
+  padding: 20px;
+}
+h1 {
+  font-size: 1.8rem;
+  color: #60a5fa;
+}
+label {
+  display: block;
+  margin-top: 10px;
+  font-weight: 600;
+  color: #d1d5db;
+}
+input {
+  padding: 10px 14px;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  background: #111827;
+  color: #f9fafb;
+  width: 260px;
+}
+button {
+  padding: 10px 20px;
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+button:hover {
+  opacity: 0.85;
+}
+.hi{
+  color: white;
+}
+h1 {
+  font-size: 1.8rem;
+  color: white;  
+}
+
+  </style>
+</head>
+<body>
+  <div class="hi">
+  <h1>預算估算器</h1>
+</div>
+  <div class="row">
+    <label>預算（Budget）</label>
+    <input type="number" id="budget" value="100000" />
+
+  <button id="btn" onclick="send()">估算</button>
+  <span id="status" style="margin-left:8px;color:#4f46e5;"></span>
+
+<h2>MAP</h2>
+<iframe id="map" src="http://127.0.0.1:8000/map?budget=120000" width="100%" height="720"></iframe>
+
+<script>
+  const API_BASE = "http://127.0.0.1:8000";
+  const $ = (id)=>document.getElementById(id);
+  const fmt = (n)=>isFinite(n)? n.toLocaleString(undefined,{maximumFractionDigits:0}) : "--";
+  let timer=null;
+
+  // 你的 send() 保留；下面僅示範自動更新地圖
+  function refreshMap(budget){
+    const url = `${API_BASE}/map?budget=${encodeURIComponent(budget)}`;
+    $("map").src = url;   // 換 URL → 重新載入一張新地圖
+  }
+
+  ["budget","usage"].forEach(id=>{
+    const el=$(id);
+    if(!el) return;
+    el.addEventListener("input", ()=>{
+      clearTimeout(timer);
+      timer=setTimeout(()=>{
+        const b = Number($("budget").value);
+        if (Number.isFinite(b) && b>=0) refreshMap(b);
+      }, 400);
+    });
+    el.addEventListener("change", ()=>{
+      const b = Number($("budget").value);
+      if (Number.isFinite(b) && b>=0) refreshMap(b);
+    });
+  });
+
+  // 頁面載入時先渲染一次
+  window.addEventListener("DOMContentLoaded", ()=>{
+    const b = Number($("budget")?.value || 120000);
+    refreshMap(b);
+  });
+</script>
+
+</body>
+</html>
+
