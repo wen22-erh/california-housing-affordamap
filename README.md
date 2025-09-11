@@ -61,47 +61,50 @@ HTML / JS (簡單前端)
 能夠支援台灣地區的資料
 使用React寫一個更豐富的前端圖表
 
-## 方法流程圖
-```mermaid
-flowchart TD
-    A[輸入房屋特徵] --> B[XGBRegressor 預測房價]
+## 方法流程
+1. **輸入特徵**  
+   - 使用房屋特徵作為模型輸入
 
-    B -.嘗試過.-> C1[切分標籤:把預算和原資料集比較]
-    C1 --> D1[XGBClassifier 訓練分類模型]
-    D1 --> E1{極端預算?}
-    E1 -->|是| F1[若預算太低或太高 → 報錯]
-    E1 -->|否| G1[可輸出 ROC-AUC，但需每次重訓]
-    F1 --> H1[棄用]
+2. **回歸預測**  
+   - 使用 `XGBRegressor` 預測房價
 
-    B --> C2[(使用訓練完的 XGBRegressor 訓練驗證集)]
-    C2 --> D2[LogisticRegression 校準]
-    D2 --> E2[Sigmoid 函數]
-    E2 --> F2["可負擔機率 (0~1)"]
-    F2 --> G2[地圖可視化: 預估各縣可負擔率]
+3. **分類嘗試（已棄用）**  
+   - 透過「預算 vs. 實際價格」切分標籤 → `XGBClassifier`  
+   - 可計算 ROC-AUC，但缺點是：  
+     - 不同預算需 **重新訓練**  
+     - 遇到極端預算（太低/太高）會報錯  
+   - → **已棄用**
 
-    style H1 fill:#ffcccc,stroke:#ff0000,stroke-width:2px
-    style F2 fill:#ccffcc,stroke:#00aa00,stroke-width:2px
-```
+4. **現行流程：機率校準**  
+   - 使用 `XGBRegressor` 輸出預測價格 \(\hat{y}\)  
+   - 與使用者輸入的 Budget 比較，轉換為二元標籤（是否 ≤ 預算）  
+   - 以 `LogisticRegression` 校準 → Sigmoid 函數 → 輸出**可負擔機率** \(p \in [0,1]\)  
+   - 將結果彙整後，可視化為各縣市的**可負擔率地圖**
 
-```mermaid
-flowchart LR
-    A[使用者輸入 Budget] --> B[Frontend (HTML/JS)]
-    B --> C[FastAPI Backend]
-    C --> D1[POST /recommend<br/>回傳 JSON]
-    C --> D2[GET /map?budget<br/>回傳地圖 HTML]
+---
 
-    D1 --> E1[XGBoost Regressor<br/>預測房價]
-    E1 --> F1[Logistic Regression 校準<br/>計算可負擔性]
-    F1 --> G1[回傳結果: 預測價格 / 是否可負擔 / Plan]
+## 系統架構流程
+1. **輸入**：使用者於前端輸入Budget  
+2. **傳輸**：前端呼叫 FastAPI 後端  
 
-    D2 --> E2[XGBoost Regressor<br/>批次推論]
-    E2 --> F2[GeoPandas + Folium<br/>縣市聚合]
-    F2 --> G2[產生 Choropleth 地圖]
+### API 1: `POST /recommend` → 回傳 JSON
+- **流程**：
+  - `XGBoost Regressor` 預測單筆房價
+  - `Logistic Regression` 校準計算可負擔性
+- **回傳內容**：
+  - 預測價格  
+  - 是否可負擔  
 
-    style F2 fill:#ccffcc,stroke:#00aa00,stroke-width:2px
-```
+### API 2: `GET /map?budget` → 回傳 HTML
+- **流程**：
+  - `XGBoost Regressor` 對整份資料集批次推論  
+  - 使用 `GeoPandas` + `Folium` 進行縣市聚合  
+  - 產生 Choropleth 地圖（可負擔率熱力圖）  
 
+---
 
-    
+## 可視化範例
+- **房價預測結果**：單筆 JSON 回傳  
+- **可負擔地圖**：地圖上顯示各縣市的可負擔率  
 
-
+---
