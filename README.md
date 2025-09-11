@@ -8,7 +8,7 @@
 ---
 
 ## Demo
-![demo screenshot](docs/demo.png)
+![demo screenshot](doc/demo.png)
 
 ---
 
@@ -66,20 +66,22 @@ HTML / JS (簡單前端)
 flowchart TD
     A[輸入房屋特徵] --> B[XGBRegressor 預測房價]
 
-    %% 嘗試過的分類路線
     B -.嘗試過.-> C1[切分標籤:把預算和原資料集比較]
     C1 --> D1[XGBClassifier 訓練分類模型]
     D1 --> E1{極端預算}
-    E1 -->|是| F1[若預算輸入太低或太高 → 報錯]
+    E1 -->|是| F1[若預算太低或太高 → 報錯]
     E1 -->|否| G1[可輸出 ROC-AUC，但需每次重訓]
     F1 --> H1[棄用]
 
-    %% 成功的回歸+Sigmoid路線
-    B --> C2[(使用訓練完的XGBRegressor訓練驗證集)]
+    B --> C2[(使用訓練完的 XGBRegressor 訓練驗證集)]
     C2 --> D2[LogisticRegression 校準]
     D2 --> E2[Sigmoid 函數]
-    E2 --> F2[可負擔機率 (0~1)]
+    E2 --> F2["可負擔機率 (0~1)"]
     F2 --> G2[地圖可視化: 預估各縣可負擔率]
+
+    style H1 fill:#ffcccc,stroke:#ff0000,stroke-width:2px
+    style F2 fill:#ccffcc,stroke:#00aa00,stroke-width:2px
+
 
     flowchart LR
     A[使用者輸入 Budget] --> B[Frontend (HTML/JS)]
