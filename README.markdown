@@ -8,7 +8,7 @@
 ---
 
 ## Demo
-![demo screenshot](docs/demo.png)
+![demo screenshot](doc/demo.png)
 
 ---
 
@@ -19,13 +19,17 @@
 
 ---
 
-## 安裝方式
+# 安裝方式
+```bash
 git clone https://github.com/yourname/housing-estimator.git
 cd housing-estimator
 pip install -r requirements.txt
+```
 
 ## 執行
+```bash
 uvicorn app:app --reload
+```
 開啟瀏覽器 → http://127.0.0.1:8000/
 就能看到介面
 
@@ -100,8 +104,3 @@ flowchart LR
 
     style F2 fill:#ccffcc,stroke:#00aa00,stroke-width:2px
 ```
-
-
-    
-
-
