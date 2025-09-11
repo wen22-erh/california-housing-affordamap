@@ -8,7 +8,7 @@
 ---
 
 ## Demo
-![demo screenshot](docs/demo.png)
+![demo screenshot](doc/demo.png)
 
 ---
 
