@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <title>極簡預算估算器</title>
+  <title>房價預算估算器</title>
   <style>
     body {
   font-family: "Roboto", sans-serif;
@@ -70,11 +70,10 @@ h1 {
   const $ = (id)=>document.getElementById(id);
   const fmt = (n)=>isFinite(n)? n.toLocaleString(undefined,{maximumFractionDigits:0}) : "--";
   let timer=null;
-
-  // 你的 send() 保留；下面僅示範自動更新地圖
+  
   function refreshMap(budget){
     const url = `${API_BASE}/map?budget=${encodeURIComponent(budget)}`;
-    $("map").src = url;   // 換 URL → 重新載入一張新地圖
+    $("map").src = url;   // 換 URL
   }
 
   ["budget","usage"].forEach(id=>{
