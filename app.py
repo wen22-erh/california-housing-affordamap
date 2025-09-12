@@ -177,7 +177,7 @@ def _prepare_map_data():
         raise RuntimeError("Preprocessor 沒有 all_cols，請檢查 artifacts/Preprocessor")
     X_all = pd.DataFrame(0, index=gdf.index, columns=all_cols, dtype="float32")
 
-    # 數值/連續欄位（含 cluster）
+    # 數值/連續欄位
     base_cols = getattr(pp, "feature_cols_base", [])
     for c in list(base_cols) + ["cluster_k15"]:
         if c in gdf.columns and c in X_all.columns:
@@ -188,18 +188,18 @@ def _prepare_map_data():
         if c in oh.columns and c in X_all.columns:
             X_all[c] = oh[c].astype("float32")
 
-    # 5) 一次性推論所有點
+    # 一次性推論所有點
     YHAT_ALL = xgb.predict(X_all).astype(float)
     Y_TRUE_ALL = df["median_house_value"].astype(float).values
 
-    # 6) 產生驗證集索引
+    # 產生驗證集索引
     n = len(Y_TRUE_ALL)
     idx_all = np.arange(n)
     tr_idx, tmp_idx, _, _ = train_test_split(idx_all, idx_all, test_size=0.4, random_state=42)
     val_idx, te_idx, _, _ = train_test_split(tmp_idx, tmp_idx, test_size=0.5, random_state=42)
     VAL_IDX = np.array(val_idx)
 
-    # 7) Geo 與縣名對應
+    # Geo 與縣名對應
     GDF_POINTS = gpd.GeoDataFrame(
         pd.DataFrame({"pred_price": YHAT_ALL}),
         geometry=gdf.geometry, crs="EPSG:4326"
@@ -214,9 +214,6 @@ def _prepare_map_data():
     log.info("[startup] map data ready: %d points, %d counties", len(GDF_POINTS), COUNTIES_WGS84.shape[0])
 
 def _afford_prob_from_budget_calibrated(B: float):
-    """
-    校準流程（與 housing.py 一致）
-    """
     y_true_val = Y_TRUE_ALL[VAL_IDX].astype(float)
     yhat_val   = YHAT_ALL[VAL_IDX].astype(float)
 
@@ -358,7 +355,6 @@ def debug_reload(x_admin_token: Optional[str] = Header(default=None)):
             try:
                 _prepare_map_data()
             except Exception as e:
-                # 這裡不要把堆疊外洩給客戶端
                 log.exception("map data prepare failed after reload")
                 if SHOW_TRACE:
                     raise HTTPException(status_code=500, detail=str(e))
@@ -388,7 +384,7 @@ def recommend(inp: RecommendIn):
         raise HTTPException(status_code=503, detail="Model loading...")
 
     try:
-        # 最簡單的 raw 特徵
+        # 特徵
         raw = {
             "housing_median_age": 15.0,
             "total_rooms": 3000.0,
