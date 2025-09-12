@@ -76,9 +76,9 @@ HTML / JS (簡單前端)
    - → **已棄用**
 
 4. **現行流程：機率校準**  
-   - 使用 `XGBRegressor` 輸出預測價格 \(\hat{y}\)  
+   - 使用 `XGBRegressor` 輸出預測價格
    - 與使用者輸入的 Budget 比較，轉換為二元標籤（是否 ≤ 預算）  
-   - 以 `LogisticRegression` 校準 → Sigmoid 函數 → 輸出**可負擔機率** \(p \in [0,1]\)  
+   - 以 `LogisticRegression` 校準 → Sigmoid 函數 → 輸出**可負擔機率**
    - 將結果彙整後，可視化為各縣市的**可負擔率地圖**
 
 ---
