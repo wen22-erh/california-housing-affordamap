@@ -33,8 +33,8 @@ uvicorn app:app --reload
 我使用 Kaggle 上的 [California Housing Prices](https://www.kaggle.com/datasets/camnugent/california-housing-prices) 資料集  
 該資料集包含加州不同地區的房價與人口、收入、地理資訊等特徵，適合用來做回歸與房價預測相關的實驗
 
-### California Dataset
-加州房價資料集來自 [US Census TIGER/Line Shapefiles]([https://www.dcc.fc.up.pt/~ltorgo/Regression/cal_housing.html](https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html))  
+### California Housing Prices
+加州房價資料集來自 [UCI Machine Learning Repository](https://www.dcc.fc.up.pt/~ltorgo/Regression/cal_housing.html)  
 
 ## Model Performance (XGBoost Regressor)
 - **R²**: 0.861 (train) | 0.821 (test)
